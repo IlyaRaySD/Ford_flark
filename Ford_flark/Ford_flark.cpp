@@ -17,15 +17,15 @@ void add_edge(vector<vector<Edge>>& mat, int from, int to, int capacity) {
 }
 
 // Function for finding path
-int path_find(int v, int t, vector<vector<Edge>>& mat, vector<bool>& visited, int min_capacity) {
-    if (v == t) return min_capacity;
-    visited[v] = true;
+int path_find(int source, int sink, vector<vector<Edge>>& mat, vector<bool>& visited, int min_capacity) {
+    if (source == sink) return min_capacity;
+    visited[source] = true;
     for (int i = 0; i < mat.size(); ++i) {
-        if (!visited[i] && mat[v][i].capacity - mat[v][i].flow > 0) {
-            int flow_through_edge = path_find(i, t, mat, visited, min(min_capacity, mat[v][i].capacity - mat[v][i].flow));
+        if (!visited[i] && mat[source][i].capacity - mat[source][i].flow > 0) {
+            int flow_through_edge = path_find(i, sink, mat, visited, min(min_capacity, mat[source][i].capacity - mat[source][i].flow));
             if (flow_through_edge > 0) {
-                mat[v][i].flow += flow_through_edge;
-                mat[i][v].flow -= flow_through_edge;
+                mat[source][i].flow += flow_through_edge;
+                mat[i][source].flow -= flow_through_edge;
                 return flow_through_edge;
             }
         }
@@ -55,7 +55,7 @@ int main() {
 
     vector<vector<Edge>> mat(n, vector<Edge>(n));
 
-    cout << "Enter the flow matrix:" << endl;
+    cout << "Enter the capacity matrix(keep in your mind: the first vertex - the init, the last - the end):" << endl;
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             int capacity;
@@ -71,6 +71,24 @@ int main() {
     int max_flow = ford_fulkerson(mat, source, sink);
 
     cout << "\nMax flow: " << max_flow << endl;
+
+    cout << "\nThe final matrix of capasity:\n";
+    for (auto i : mat) {
+        for (auto j : i) {
+            cout << j.capacity << ' ';
+        }
+        cout << endl;
+    }
+
+    cout << "\nThe final matrix of flows:\n";
+    for (auto i : mat) {
+        for (auto j : i) {
+            cout << j.flow << ' ';
+        }
+        cout << endl;
+    }
+
+    cout << "\n\n\n";
 
     return 0;
 }
